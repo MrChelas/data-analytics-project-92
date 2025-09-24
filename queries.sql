@@ -1,8 +1,8 @@
 /* Запрос находит десятку лучших продавцов по выручке*/
 SELECT
-	CONCAT(e.first_name || ' '|| e.last_name) as seller,
-	COUNT(s.sales_id) as operations,
-	FLOOR(SUM(p.price * s.quantity)) as income
+	CONCAT(e.first_name || ' '|| e.last_name) AS seller,
+	COUNT(s.sales_id) AS operations,
+	FLOOR(SUM(p.price * s.quantity)) AS income
 FROM sales s
 INNER JOIN employees e
 	ON e.employee_id = s.sales_person_id
@@ -16,12 +16,12 @@ LIMIT 10;
 /*Запрос находит продавцов, чья средняя выручка за сделку меньше средней выручки по всем продавцам*/
 WITH tab AS (
 	SELECT
-		CONCAT(e.first_name ||' ' || e.last_name) as seller,
-		FLOOR(AVG(p.price * s.quantity)) as average_income
+		CONCAT(e.first_name ||' ' || e.last_name) AS seller,
+		FLOOR(AVG(p.price * s.quantity)) AS average_income
 	FROM sales AS s
-	INNER JOIN products as p
+	INNER JOIN products AS p
 		ON p.product_id = s.product_id
-	INNER JOIN employees as e
+	INNER JOIN employees AS e
 		ON e.employee_id = s.sales_person_id
 	GROUP BY CONCAT(e.first_name ||' '|| e.last_name)
 	),
@@ -43,16 +43,16 @@ ORDER BY 2;
 
 /*Запрос находит информацию о выручке по дням недели в разрезе продавцов*/
 SELECT
-	CONCAT(e.first_name ||' '|| e.last_name) as seller,
-	TO_CHAR(sale_date, 'day') as day_of_week,
-	FLOOR(SUM(p.price * s.quantity)) as income
+	CONCAT(e.first_name ||' '|| e.last_name) AS seller,
+	TO_CHAR(sale_date, 'day') AS day_of_week,
+	FLOOR(SUM(p.price * s.quantity)) AS income
 FROM sales s
 INNER JOIN employees e
 	ON e.employee_id = s.sales_person_id
 INNER JOIN products p
 	ON p.product_id = s.product_id d
-GROUP BY EXTRACT(isodow from sale_date), TO_CHAR(sale_date, 'day'), CONCAT(e.first_name ||' '|| e.last_name)
-ORDER BY EXTRACT(isodow from sale_date), seller;
+GROUP BY EXTRACT(isodow FROM sale_date), TO_CHAR(sale_date, 'day'), CONCAT(e.first_name ||' '|| e.last_name)
+ORDER BY EXTRACT(isodow FROM sale_date), seller;
 
 
 /*Запрос находит количество покупателей по трем возрастным категориям*/
@@ -69,7 +69,7 @@ WITH tab AS (
 
 SELECT
 	age_category,
-	COUNT(*) as age_count
+	COUNT(*) AS age_count
 FROM tab
 GROUP BY age_category
 ORDER BY age_category;
@@ -77,8 +77,8 @@ ORDER BY age_category;
 
 /*Запрос показывает данные по количеству уникальных покупателей и выручке в разрезе месяца*/
 SELECT
-	SUBSTR(DATE_TRUNC ('month', sale_date)::text, 1, 7) as selling_month,
-	COUNT(DISTINCT c.customer_id) as total_customers,
+	SUBSTR(DATE_TRUNC ('month', sale_date)::text, 1, 7) AS selling_month,
+	COUNT(DISTINCT c.customer_id) AS total_customers,
 	FLOOR(SUM(s.quantity * p.price)) AS income
 FROM sales s
 INNER JOIN customers c
@@ -108,7 +108,7 @@ WITH tab AS (
 		ON p.product_id = s.product_id
 	),
 	
-tab_2 as (
+tab_2 AS (
 	SELECT 
 		sales_id, 
 		customer_id,
@@ -122,9 +122,10 @@ tab_2 as (
 
 SELECT 
 	customer,
-	MIN(sale_date) as sale_date,
+	MIN(sale_date) AS sale_date,
 	seller
 FROM tab_2
 WHERE sale_date = first_purchase
 GROUP BY customer, seller
 ORDER BY customer;
+
