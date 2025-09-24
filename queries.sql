@@ -80,7 +80,6 @@ GROUP BY age_category
 ORDER BY age_category;
 
 
-
 /*Запрос показывает данные по количеству уникальных покупателей
 и выручке в разрезе месяца*/
 SELECT
@@ -97,8 +96,7 @@ ORDER BY DATE_TRUNC('month', s.sale_date);
 
 
 /*Запрос находит покупателей, 
-совершивших первую покупку в ходе проведения акции
-(когда сумма товара была равна 0)*/
+совершивших первую покупку в ходе проведения акции(когда сумма товара была равна 0)*/
 WITH tab AS (
     SELECT
         s.sales_id,
@@ -139,3 +137,4 @@ FROM tab_2
 WHERE sale_date = first_purchase
 GROUP BY customer, seller
 ORDER BY customer;
+
