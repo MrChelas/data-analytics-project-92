@@ -95,8 +95,8 @@ GROUP BY DATE_TRUNC('month', s.sale_date)
 ORDER BY DATE_TRUNC('month', s.sale_date);
 
 
-/*Запрос находит покупателей, 
-совершивших первую покупку в ходе проведения акции(когда сумма товара была равна 0)*/
+/*Запрос находит покупателей,
+совершивших первую покупку в ходе проведения акции*/
 WITH tab AS (
     SELECT
         s.sales_id,
@@ -137,4 +137,3 @@ FROM tab_2
 WHERE sale_date = first_purchase
 GROUP BY customer, seller
 ORDER BY customer;
-
