@@ -44,14 +44,14 @@ ORDER BY 2;
 /*Запрос находит информацию о выручке по дням недели в разрезе продавцов*/
 SELECT
 	CONCAT(e.first_name ||' '|| e.last_name) as seller,
-	TO_CHAR(sale_date, 'Day') as day_of_week,
+	TO_CHAR(sale_date, 'day') as day_of_week,
 	FLOOR(SUM(p.price * s.quantity)) as income
 FROM sales s
 INNER JOIN employees e
 	ON e.employee_id = s.sales_person_id
 INNER JOIN products p
-	ON p.product_id = s.product_id
-GROUP BY EXTRACT(isodow from sale_date), TO_CHAR(sale_date, 'Day'), CONCAT(e.first_name ||' '|| e.last_name)
+	ON p.product_id = s.product_id d
+GROUP BY EXTRACT(isodow from sale_date), TO_CHAR(sale_date, 'day'), CONCAT(e.first_name ||' '|| e.last_name)
 ORDER BY EXTRACT(isodow from sale_date), seller;
 
 
@@ -106,23 +106,25 @@ WITH tab AS (
 		ON e.employee_id = s.sales_person_id 
 	INNER JOIN products p
 		ON p.product_id = s.product_id
-	AND p.price = 0
 	),
-	tab_2 AS (
+	
+tab_2 as (
 	SELECT 
 		sales_id, 
 		customer_id,
 		customer, 
 		sale_date, 
 		seller, price,
-		MIN(sales_id) OVER (PARTITION BY customer_id) as first_purchase
+		MIN(sale_date) OVER (PARTITION BY customer_id) as first_purchase
 	FROM tab
-	ORDER BY customer_id, sales_id)
+	WHERE price = 0
+	ORDER BY sale_date, sales_id)
 
-SELECT
+SELECT 
 	customer,
-	sale_date,
+	MIN(sale_date) as sale_date,
 	seller
 FROM tab_2
-WHERE sales_id = first_purchase
-ORDER BY customer_id;
+WHERE sale_date = first_purchase
+GROUP BY customer, seller
+ORDER BY customer;
