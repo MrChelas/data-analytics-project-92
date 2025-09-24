@@ -13,7 +13,8 @@ ORDER BY income DESC
 LIMIT 10;
 
 
-/*Запрос находит продавцов, чья средняя выручка за сделку меньше средней выручки по всем продавцам*/
+/*Запрос находит продавцов, чья средняя выручка за сделку
+меньше средней выручки по всем продавцам*/
 WITH tab AS (
     SELECT
         CONCAT(e.first_name || ' ' || e.last_name) AS seller,
@@ -80,7 +81,8 @@ ORDER BY age_category;
 
 
 
-/*Запрос показывает данные по количеству уникальных покупателей и выручке в разрезе месяца*/
+/*Запрос показывает данные по количеству уникальных покупателей
+и выручке в разрезе месяца*/
 SELECT
     SUBSTR(DATE_TRUNC('month', s.sale_date)::text, 1, 7) AS selling_month,
     COUNT(DISTINCT c.customer_id) AS total_customers,
@@ -94,7 +96,9 @@ GROUP BY DATE_TRUNC('month', s.sale_date)
 ORDER BY DATE_TRUNC('month', s.sale_date);
 
 
-/*Запрос находит покупателей, совершивших первую покупку в ходе проведения акции (когда сумма товара была равна 0)*/
+/*Запрос находит покупателей, 
+совершивших первую покупку в ходе проведения акции
+(когда сумма товара была равна 0)*/
 WITH tab AS (
     SELECT
         s.sales_id,
@@ -135,4 +139,3 @@ FROM tab_2
 WHERE sale_date = first_purchase
 GROUP BY customer, seller
 ORDER BY customer;
-
