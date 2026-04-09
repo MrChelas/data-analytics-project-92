@@ -84,8 +84,8 @@ INNER JOIN customers AS c
     ON s.customer_id = c.customer_id
 INNER JOIN products AS p
     ON s.product_id = p.product_id
-GROUP BY selling_month
-ORDER BY selling_month;
+GROUP BY TO_CHAR(s.sale_date, 'YYYY-MM')
+ORDER BY TO_CHAR(s.sale_date, 'YYYY-MM');
 
 
 /*Запрос находит покупателей, совершивших первую покупку в ходе проведения акции
