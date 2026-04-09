@@ -76,7 +76,7 @@ ORDER BY age_category
 /*Запрос показывает данные по количеству уникальных покупателей
 и выручке в разрезе месяца*/
 SELECT
-    TO_CHAR(sale_date, 'YYYY-MM') AS selling_month,
+    TO_CHAR(s.sale_date, 'YYYY-MM') AS selling_month,
     COUNT(DISTINCT c.customer_id) AS total_customers,
     FLOOR(SUM(s.quantity * p.price)) AS income
 FROM sales AS s
