@@ -14,30 +14,23 @@ LIMIT 10;
 
 /*Запрос находит продавцов, чья средняя выручка за сделку меньше
 средней выручки по всем продавцам*/
-WITH tab AS (
-    SELECT
-        CONCAT(e.first_name || ' ' || e.last_name) AS seller,
-        FLOOR(AVG(p.price * s.quantity)) AS average_income,
-        FLOOR(AVG(p.price * s.quantity))
-        - FLOOR(
-            SUM(SUM(p.price * s.quantity)) OVER ()
-            / SUM(COUNT(p.price * s.quantity)) OVER ()
-        ) AS diff
-    FROM sales AS s
-    INNER JOIN products AS p
-        ON s.product_id = p.product_id
-    INNER JOIN employees AS e
-        ON s.sales_person_id = e.employee_id
-    GROUP BY CONCAT(e.first_name || ' ' || e.last_name)
-)
-
 SELECT
-    seller,
-    average_income
-FROM tab
-WHERE diff < 0
+    CONCAT(e.first_name || ' ' || e.last_name) AS seller,
+    FLOOR(AVG(p.price * s.quantity)) AS average_income
+FROM sales AS s
+INNER JOIN products AS p
+    ON s.product_id = p.product_id
+INNER JOIN employees AS e
+    ON s.sales_person_id = e.employee_id
+GROUP BY CONCAT(e.first_name || ' ' || e.last_name)
+HAVING
+    FLOOR(AVG(p.price * s.quantity)) <= (
+        SELECT AVG(p.price * s.quantity) AS avg_income
+        FROM sales AS s
+        INNER JOIN products AS p
+            ON s.product_id = p.product_id
+    )
 ORDER BY average_income;
-
 
 /*Запрос находит информацию о выручке по дням недели в разрезе продавцов*/
 SELECT
@@ -106,20 +99,14 @@ WITH tab AS (
         ON s.sales_person_id = e.employee_id
     INNER JOIN products AS p
         ON s.product_id = p.product_id
-),
-
-tab_2 AS (
-    SELECT *
-    FROM tab
-    WHERE price = 0
-    ORDER BY sale_date, sales_id
+    WHERE p.price = 0
 )
 
 SELECT
     customer,
     seller,
     MIN(sale_date) AS sale_date
-FROM tab_2
+FROM tab
 WHERE sale_date = first_purchase
 GROUP BY customer, seller
 ORDER BY customer;
