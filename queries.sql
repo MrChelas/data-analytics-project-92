@@ -25,10 +25,10 @@ INNER JOIN employees AS e
 GROUP BY CONCAT(e.first_name || ' ' || e.last_name)
 HAVING
     FLOOR(AVG(p.price * s.quantity)) <= (
-        SELECT AVG(p.price * s.quantity) AS avg_income
-        FROM sales AS s
-        INNER JOIN products AS p
-            ON s.product_id = p.product_id
+        SELECT AVG(p2.price * s2.quantity) AS avg_income
+        FROM sales AS s2
+        INNER JOIN products AS p2
+            ON s2.product_id = p2.product_id
     )
 ORDER BY average_income;
 
