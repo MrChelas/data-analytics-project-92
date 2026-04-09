@@ -24,7 +24,7 @@ INNER JOIN employees AS e
     ON s.sales_person_id = e.employee_id
 GROUP BY CONCAT(e.first_name || ' ' || e.last_name)
 HAVING
-    FLOOR(AVG(p.price * s.quantity)) <= (
+    FLOOR(AVG(p.price * s.quantity)) < (
         SELECT AVG(p2.price * s2.quantity) AS avg_income
         FROM sales AS s2
         INNER JOIN products AS p2
