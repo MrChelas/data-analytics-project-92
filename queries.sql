@@ -1,17 +1,16 @@
 /* Запрос находит десятку лучших продавцов по выручке*/
 SELECT
-	CONCAT(e.first_name || ' '|| e.last_name) as seller,
-	COUNT(s.sales_id) as operations,
-	FLOOR(SUM(p.price * s.quantity)) as income
-FROM sales s
-INNER JOIN employees e
-	ON e.employee_id = s.sales_person_id
-INNER JOIN products p
-	ON p.product_id = s.product_id
-GROUP BY CONCAT(e.first_name ||' '|| e.last_name)
+    CONCAT(e.first_name || ' ' || e.last_name) AS seller,
+    COUNT(s.sales_id) AS operations,
+    FLOOR(SUM(p.price * s.quantity)) AS income
+FROM sales AS s
+INNER JOIN employees AS e
+    ON s.sales_person_id = e.employee_id
+INNER JOIN products AS p
+    ON s.product_id = p.product_id
+GROUP BY CONCAT(e.first_name || ' ' || e.last_name)
 ORDER BY income DESC
 LIMIT 10;
-
 
 /*Запрос находит продавцов, чья средняя выручка за сделку меньше средней выручки по всем продавцам*/
 WITH tab AS (
@@ -31,6 +30,7 @@ WITH tab AS (
     GROUP BY CONCAT(e.first_name || ' ' || e.last_name)
 )
 
+
 SELECT
     seller,
     average_income
@@ -41,16 +41,20 @@ ORDER BY average_income;
 
 /*Запрос находит информацию о выручке по дням недели в разрезе продавцов*/
 SELECT
-	CONCAT(e.first_name ||' '|| e.last_name) as seller,
-	TO_CHAR(sale_date, 'day') as day_of_week,
-	FLOOR(SUM(p.price * s.quantity)) as income
-FROM sales s
-INNER JOIN employees e
-	ON e.employee_id = s.sales_person_id
-INNER JOIN products p
-	ON p.product_id = s.product_id d
-GROUP BY EXTRACT(isodow from sale_date), TO_CHAR(sale_date, 'day'), CONCAT(e.first_name ||' '|| e.last_name)
-ORDER BY EXTRACT(isodow from sale_date), seller;
+    CONCAT(e.first_name || ' ' || e.last_name) AS seller,
+    RTRIM(TO_CHAR(sale_date, 'day')) AS day_of_week,
+    FLOOR(SUM(p.price * s.quantity)) AS income
+FROM sales AS s
+INNER JOIN employees AS e
+    ON s.sales_person_id = e.employee_id
+INNER JOIN products AS p
+    ON s.product_id = p.product_id
+GROUP BY
+    EXTRACT(ISODOW FROM sale_date),
+    TO_CHAR(sale_date, 'day'),
+    CONCAT(e.first_name || ' ' || e.last_name)
+ORDER BY EXTRACT(ISODOW FROM sale_date), seller;
+
 
 
 /*Запрос находит количество покупателей по трем возрастным категориям*/
@@ -120,4 +124,5 @@ FROM tab_2
 WHERE sale_date = first_purchase
 GROUP BY customer, seller
 ORDER BY customer;
+
 
