@@ -12,7 +12,8 @@ GROUP BY CONCAT(e.first_name || ' ' || e.last_name)
 ORDER BY income DESC
 LIMIT 10;
 
-/*Запрос находит продавцов, чья средняя выручка за сделку меньше средней выручки по всем продавцам*/
+/*Запрос находит продавцов, чья средняя выручка за сделку меньше
+средней выручки по всем продавцам*/
 WITH tab AS (
     SELECT
         CONCAT(e.first_name || ' ' || e.last_name) AS seller,
@@ -30,7 +31,6 @@ WITH tab AS (
     GROUP BY CONCAT(e.first_name || ' ' || e.last_name)
 )
 
-
 SELECT
     seller,
     average_income
@@ -42,7 +42,7 @@ ORDER BY average_income;
 /*Запрос находит информацию о выручке по дням недели в разрезе продавцов*/
 SELECT
     CONCAT(e.first_name || ' ' || e.last_name) AS seller,
-    RTRIM(TO_CHAR(sale_date, 'day')) AS day_of_week,
+    RTRIM(TO_CHAR(s.sale_date, 'day')) AS day_of_week,
     FLOOR(SUM(p.price * s.quantity)) AS income
 FROM sales AS s
 INNER JOIN employees AS e
@@ -50,12 +50,10 @@ INNER JOIN employees AS e
 INNER JOIN products AS p
     ON s.product_id = p.product_id
 GROUP BY
-    EXTRACT(ISODOW FROM sale_date),
-    TO_CHAR(sale_date, 'day'),
+    EXTRACT(ISODOW FROM s.sale_date),
+    TO_CHAR(s.sale_date, 'day'),
     CONCAT(e.first_name || ' ' || e.last_name)
-ORDER BY EXTRACT(ISODOW FROM sale_date), seller;
-
-
+ORDER BY EXTRACT(ISODOW FROM s.sale_date), seller;
 
 /*Запрос находит количество покупателей по трем возрастным категориям*/
 SELECT
@@ -75,8 +73,8 @@ FROM customers
 GROUP BY age_category
 ORDER BY age_category
 
-
-/*Запрос показывает данные по количеству уникальных покупателей и выручке в разрезе месяца*/
+/*Запрос показывает данные по количеству уникальных покупателей
+и выручке в разрезе месяца*/
 SELECT
     TO_CHAR(DATE_TRUNC('month', sale_date), 'yyyy-mm') AS selling_month,
     COUNT(DISTINCT c.customer_id) AS total_customers,
@@ -90,7 +88,8 @@ GROUP BY selling_month
 ORDER BY selling_month;
 
 
-/*Запрос находит покупателей, совершивших первую покупку в ходе проведения акции (когда сумма товара была равна 0)*/
+/*Запрос находит покупателей, совершивших первую покупку в ходе проведения акции
+(когда сумма товара была равна 0)*/
 WITH tab AS (
     SELECT
         s.sales_id,
@@ -124,5 +123,3 @@ FROM tab_2
 WHERE sale_date = first_purchase
 GROUP BY customer, seller
 ORDER BY customer;
-
-
