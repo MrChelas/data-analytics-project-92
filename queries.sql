@@ -71,7 +71,7 @@ SELECT
     ) AS age_count
 FROM customers
 GROUP BY age_category
-ORDER BY age_category
+ORDER BY age_category;
 
 /*Запрос показывает данные по количеству уникальных покупателей
 и выручке в разрезе месяца*/
